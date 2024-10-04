@@ -1118,9 +1118,13 @@ public:
   // the call of propagator callbacks and when a driving clause is leading
   // to an assignment.
   //
+  // CS 8803
+  // Notify the propagator about restarts performed.
+  //
   virtual void notify_assignment (int lit, bool is_fixed) = 0;
   virtual void notify_new_decision_level () = 0;
   virtual void notify_backtrack (size_t new_level) = 0;
+  virtual void notify_restart () = 0;
 
   // Check by the external propagator the found complete solution (after
   // solution reconstruction). If it returns false, the propagator must
@@ -1174,6 +1178,9 @@ public:
   // The actual function called to add the external clause.
   //
   virtual int cb_add_external_clause_lit () = 0;
+
+  // CS 8803 Restart functionality
+  virtual int cb_restart () = 0;
 };
 
 /*------------------------------------------------------------------------*/

@@ -677,6 +677,11 @@ struct Internal {
   void set_tainted_literal ();
   void connect_propagator ();
 
+  // CS 8803 restart api
+  //
+  void notify_restart ();
+  int cb_restart ();
+
   // Use last learned clause to subsume some more.
   //
   void eagerly_subsume_recently_learned_clauses (Clause *);
