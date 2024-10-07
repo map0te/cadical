@@ -771,6 +771,16 @@ void Internal::connect_propagator () {
 
 /*----------------------------------------------------------------------------*/
 //
+// Notify the external propagator that a restart has occured.
+//
+void Internal::notify_restart () {
+  if (!external_prop || external_prop_is_lazy)
+    return;
+  external->propagator->notify_restart ();
+}
+
+/*----------------------------------------------------------------------------*/
+//
 // Notify the external propagator that a new decision level is started.
 //
 void Internal::notify_decision () {

@@ -15,6 +15,9 @@ class EP : public CaDiCaL::ExternalPropagator {
     bool cb_check_found_model (const std::vector<int> &model) {
         printf("here");
     }
+    void notify_restart() {
+        printf("Notified restart\n");
+    }
 
     int cb_decide () { return 0; }
     int cb_propagate () { return 0; }
@@ -22,6 +25,7 @@ class EP : public CaDiCaL::ExternalPropagator {
         (void) propagated_lit;
         return 0;
     }
+    int cb_restart () {return 0; }
     bool cb_has_external_clause () { return false; }
     int cb_add_external_clause_lit () { return 0; }
 };

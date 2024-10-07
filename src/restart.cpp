@@ -119,6 +119,7 @@ int Internal::reuse_trail () {
 }
 
 void Internal::restart () {
+  notify_restart();
   START (restart);
   stats.restarts++;
   stats.restartlevels += level;
