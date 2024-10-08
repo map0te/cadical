@@ -269,6 +269,8 @@ int Internal::cdcl_loop_with_inprocessing () {
       break;
     else if (restarting ())
       restart (); // restart by backtracking
+    else if (external_restart ())
+      restart ();
     else if (rephasing ())
       rephase (); // reset variable phases
     else if (reducing ())

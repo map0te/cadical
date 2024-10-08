@@ -400,7 +400,7 @@ public:
 
   // CS 8803
   void notify_restart () {};
-  int cb_restart () { return 0; };
+  bool cb_restart () { return 0; };
 
   /*-------------------------- Observer functions ----------------------*/
   void notify_fixed_assignment (int lit) {

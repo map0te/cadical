@@ -680,7 +680,7 @@ struct Internal {
   // CS 8803 restart api
   //
   void notify_restart ();
-  int cb_restart ();
+  bool external_restart ();
 
   // Use last learned clause to subsume some more.
   //

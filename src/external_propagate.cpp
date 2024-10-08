@@ -781,6 +781,26 @@ void Internal::notify_restart () {
 
 /*----------------------------------------------------------------------------*/
 //
+// Asks the external propagator if a restart should be executed by calling 
+// cb_restart.
+//
+
+bool Internal::external_restart () {
+  if (!opts.restart)
+    return false;
+  if ((size_t) level < assumptions.size () + 2)
+    return false;
+  bool ex_r = external->propagator->cb_restart ();
+  return ex_r;
+}
+
+/*----------------------------------------------------------------------------*/
+//
+// Notify the external propagator that a restart has occured.
+//
+
+/*----------------------------------------------------------------------------*/
+//
 // Notify the external propagator that a new decision level is started.
 //
 void Internal::notify_decision () {

@@ -1180,7 +1180,7 @@ public:
   virtual int cb_add_external_clause_lit () = 0;
 
   // CS 8803 Restart functionality
-  virtual int cb_restart () = 0;
+  virtual bool cb_restart () = 0;
 };
 
 /*------------------------------------------------------------------------*/
