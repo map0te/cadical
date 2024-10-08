@@ -25,9 +25,13 @@ class EP : public CaDiCaL::ExternalPropagator {
         (void) propagated_lit;
         return 0;
     }
-    int cb_restart () {return 0; }
+    bool cb_restart () { 
+        return false;
+    }
     bool cb_has_external_clause () { return false; }
     int cb_add_external_clause_lit () { return 0; }
+
+    int restarts=0;
 };
 
 }
