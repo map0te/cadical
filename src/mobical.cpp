@@ -399,7 +399,7 @@ public:
   /*-----------------functions for mobical ends ------------------------*/
 
   // CS 8803
-  void notify_restart () {};
+  void notify_restart (double slow_average, double fast_average) {};
   bool cb_restart () { return 0; };
 
   /*-------------------------- Observer functions ----------------------*/

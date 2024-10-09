@@ -776,7 +776,8 @@ void Internal::connect_propagator () {
 void Internal::notify_restart () {
   if (!external_prop || external_prop_is_lazy)
     return;
-  external->propagator->notify_restart ();
+  external->propagator->notify_restart 
+    (averages.current.glue.slow, averages.current.glue.fast);
 }
 
 /*----------------------------------------------------------------------------*/

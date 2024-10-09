@@ -1124,7 +1124,7 @@ public:
   virtual void notify_assignment (int lit, bool is_fixed) = 0;
   virtual void notify_new_decision_level () = 0;
   virtual void notify_backtrack (size_t new_level) = 0;
-  virtual void notify_restart () = 0;
+  virtual void notify_restart (double slow_average, double fast_average) = 0;
 
   // Check by the external propagator the found complete solution (after
   // solution reconstruction). If it returns false, the propagator must
