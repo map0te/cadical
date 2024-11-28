@@ -53,16 +53,32 @@ int Internal::next_decision_variable () {
 int Internal::decide_phase (int idx, bool target) {
   const int initial_phase = opts.phase ? 1 : -1;
   int phase = 0;
-  if (force_saved_phase)
+  if (force_saved_phase) {
+    if (opts.rephaserl && randflip == 'U') {
+      if (mab.last.phase == 'F')
+        phase = phases.flipping[idx];
+      else
+        phase = phases.random[idx];
+    } else {
     phase = phases.saved[idx];
+    }
+  }
   if (!phase)
     phase = phases.forced[idx]; // swapped with opts.forcephase case!
   if (!phase && opts.forcephase)
     phase = initial_phase;
   if (!phase && target)
     phase = phases.target[idx];
-  if (!phase)
+  if (!phase) {
+    if (opts.rephaserl && randflip == 'U') {
+      if (mab.last.phase == 'F')
+        phase = phases.flipping[idx];
+      else
+        phase = phases.random[idx];
+    } else {
     phase = phases.saved[idx];
+    }
+  }
 
   // The following should not be necessary and in some version we had even
   // a hard 'COVER' assertion here to check for this.   Unfortunately it

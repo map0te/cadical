@@ -75,6 +75,20 @@ char Internal::rephase_random () {
   return '#';
 }
 
+// Generate both random and flipped phase for RL switching
+
+char Internal::rephase_randflip () {
+  stats.rephased.random++;
+  PHASE ("rephase", stats.rephased.total, "switch between flipped and random");
+  Random random (opts.seed);
+  random += stats.rephased.random;
+  for (auto idx : vars)
+    phases.random[idx] = random.generate_bool () ? -1 : 1;
+  for (auto idx : vars)
+    phases.flipping[idx] *= -1;
+  return 'U';
+}
+
 // Best phases are those saved at the largest trail height without conflict.
 // See code and comments in 'update_target_and_best' in 'backtrack.cpp'
 
@@ -127,7 +141,26 @@ void Internal::rephase () {
   else
     single = !opts.stabilize;
 
-  if (single && !opts.walk) {
+  if (opts.rephaserl && !stable && opts.walk) {
+    randflip = 0;
+    switch(count % 3) {
+    case 1:
+      type = 'B';
+      rephase_best();
+      break;
+    case 2:
+      type = 'W';
+      rephase_walk();
+      break;
+    case 0:
+      type = 'U';
+      randflip = 'U';
+      printf("F: %lf %lf, #: %lf %lf\n", mab.F.alpha, mab.F.beta, mab.R.alpha, mab.R.beta);
+      mab.reset();
+      rephase_randflip();
+      break;
+    }
+  } else if (single && !opts.walk) {
     // (inverted,best,flipping,best,random,best,original,best)^\omega
     switch (count % 8) {
     case 0:
@@ -229,6 +262,7 @@ void Internal::rephase () {
         break;
       }
   } else if (stable && opts.walk) {
+    randflip = 0;
     // original,inverted,(best,walk,original,best,walk,inverted)^\omega
     if (!count)
       type = rephase_original ();
@@ -312,7 +346,8 @@ void Internal::rephase () {
   }
   assert (type);
 
-  int64_t delta = opts.rephaseint * (stats.rephased.total + 1);
+  int64_t delta;
+  delta = opts.rephaseint * (stats.rephased.total + 1);
   lim.rephase = stats.conflicts + delta;
 
   PHASE ("rephase", stats.rephased.total,

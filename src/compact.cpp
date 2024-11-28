@@ -346,6 +346,13 @@ void Internal::compact () {
   mapper.map_vector (phases.prev);
   mapper.map_vector (phases.min);
 
+  if (opts.rephaserl) {
+    mapper.map_vector (phases.random);
+    mapper.map_vector (phases.flipping);
+    mapper.map_vector (phases.original);
+    mapper.map_vector (phases.inverted);
+  }
+
   // Special code for 'frozentab'.
   //
   for (auto src : vars) {

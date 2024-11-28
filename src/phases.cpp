@@ -9,6 +9,20 @@ void Internal::copy_phases (vector<signed char> &dst) {
   STOP (copy);
 }
 
+void Internal::copy_phases_flipping (vector<signed char> &dst) {
+  START (copy);
+  for (auto i : vars)
+    dst[i] = phases.flipping[i];
+  STOP (copy);
+}
+
+void Internal::copy_phases_random (vector<signed char> &dst) {
+  START (copy);
+  for (auto i : vars)
+    dst[i] = phases.random[i];
+  STOP (copy);
+}
+
 void Internal::clear_phases (vector<signed char> &dst) {
   START (copy);
   for (auto i : vars)

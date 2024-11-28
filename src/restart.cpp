@@ -45,8 +45,10 @@ bool Internal::stabilizing () {
            " at conflicts interval %" PRId64 "",
            lim.stabilize, inc.stabilize);
     report (stable ? '[' : '{');
-    if (stable)
+    if (stable) {
+      randflip = 0;
       START (stable);
+    }
     else
       START (unstable);
   }
@@ -119,13 +121,41 @@ int Internal::reuse_trail () {
 }
 
 void Internal::restart () {
+  
+  bool reuse = true;
+
+  // if rephaserl and in randflip phase, choose which phase the next
+  // restart window will work on based on MAB
+  if (opts.rephaserl && stats.restarts % 30) {
+    if (randflip == 'U') {
+      // update llr EMA 
+      double llr = (stats.conflicts-mab.last.conflicts)
+       / (double) (stats.decisions-mab.last.decisions);
+      UPDATE_AVERAGE(averages.current.llr, llr);
+      // update MAB
+      mab.last.conflicts = stats.conflicts;
+      mab.last.decisions = stats.decisions;
+      Random random (opts.seed);
+      random += stats.restarts;
+      mab.unstable_update(llr, averages.current.llr.value);
+      // decide on next flip/rand phase
+      char last_phase = mab.last.phase;
+      mab.unstable_decide(random.generate_int());
+      //printf("Rephased to %c, llr=%lf, emallr=%lf\n", mab.last.phase, llr, averages.current.llr.value);
+      reuse = (last_phase == mab.last.phase);
+    }
+  }
+
   START (restart);
   stats.restarts++;
   stats.restartlevels += level;
   if (stable)
     stats.restartstable++;
   LOG ("restart %" PRId64 "", stats.restarts);
-  backtrack (reuse_trail ());
+  if (reuse)
+    backtrack (reuse_trail ());
+  else
+    backtrack ();
 
   lim.restart = stats.conflicts + opts.restartint;
   LOG ("new restart limit at %" PRId64 " conflicts", lim.restart);

@@ -93,6 +93,7 @@ extern "C" {
 #include "score.hpp"
 #include "stats.hpp"
 #include "terminal.hpp"
+#include "thompson.hpp"
 #include "tracer.hpp"
 #include "util.hpp"
 #include "var.hpp"
@@ -176,6 +177,7 @@ struct Internal {
   bool forced_backt_allowed;  // external propagator can force backtracking
   bool private_steps;         // no notification of ext. prop during these steps
   char rephased;              // last type of resetting phases
+  char randflip;              // if in randflip mode
   Reluctant reluctant;        // restart counter in stable mode
   size_t vsize;               // actually allocated variable data size
   int max_var;                // internal maximum variable index
@@ -257,6 +259,8 @@ struct Internal {
   Limit lim;                // limits for various phases
   Last last;                // statistics at last occurrence
   Inc inc;                  // increments on limits
+
+  MAB mab;                  // thompson sampling for rephase
 
   Proof *proof;             // abstraction layer between solver and tracers
   LratBuilder *lratbuilder; // special proof tracer
@@ -707,6 +711,9 @@ struct Internal {
   void clear_phases (vector<signed char> &); // reset argument to zero
   void copy_phases (vector<signed char> &);  // copy 'saved' to argument
 
+  void copy_phases_flipping (vector<signed char> &dst);
+  void copy_phases_random (vector<signed char> &dst);
+
   // Resetting the saved phased in 'rephase.cpp'.
   //
   bool rephasing ();
@@ -715,6 +722,7 @@ struct Internal {
   char rephase_inverted ();
   char rephase_original ();
   char rephase_random ();
+  char rephase_randflip ();
   char rephase_walk ();
   void shuffle_scores ();
   void shuffle_queue ();

@@ -12,7 +12,7 @@ Internal::Internal ()
       searching_lucky_phases (false), stable (false), reported (false),
       external_prop (false), did_external_prop (false),
       external_prop_is_lazy (true), forced_backt_allowed (false), 
-      private_steps (false), rephased (0), vsize (0), max_var (0), 
+      private_steps (false), rephased (0), randflip (0), vsize (0), max_var (0), 
       clause_id (0), original_id (0), reserved_ids (0), 
       conflict_id (0), concluded (false), lrat (false), level (0), vals (0),
       score_inc (1.0), scores (this), conflict (0), ignore (0),
@@ -149,6 +149,12 @@ void Internal::enlarge (int new_max_var) {
   enlarge_zero (phases.best, new_vsize);
   enlarge_zero (phases.prev, new_vsize);
   enlarge_zero (phases.min, new_vsize);
+  if (opts.rephaserl) {
+    enlarge_zero (phases.random, new_vsize);
+    enlarge_zero (phases.flipping, new_vsize);
+    enlarge_zero (phases.original, new_vsize);
+    enlarge_zero (phases.inverted, new_vsize);
+  }
   enlarge_zero (marks, new_vsize);
   vsize = new_vsize;
 }

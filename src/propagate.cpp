@@ -148,8 +148,16 @@ inline void Internal::search_assign (int lit, Clause *reason) {
   set_val (idx, tmp);
   assert (val (lit) > 0);  // Just a bit paranoid but useful.
   assert (val (-lit) < 0); // Ditto.
-  if (!searching_lucky_phases)
+  if (!searching_lucky_phases) {
+    if (opts.rephaserl && randflip == 'U') {
+      if (mab.last.phase == 'F')
+        phases.flipping[idx] = tmp;
+      else
+        phases.random[idx] = tmp;
+    } else {
     phases.saved[idx] = tmp; // phase saving during search
+    }
+  }
   trail.push_back (lit);
 #ifdef LOGGING
   if (!lit_level)

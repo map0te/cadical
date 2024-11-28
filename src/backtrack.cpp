@@ -54,13 +54,30 @@ void Internal::update_target_and_best () {
   }
 
   if (no_conflict_until > target_assigned) {
-    copy_phases (phases.target);
+    if (opts.rephaserl && randflip == 'U') {
+      if (mab.last.phase == 'F')
+        copy_phases_flipping (phases.target);
+      else
+        copy_phases_random (phases.target);
+    } else {
+      copy_phases (phases.target);
+    }
     target_assigned = no_conflict_until;
     LOG ("new target trail level %zu", target_assigned);
   }
 
   if (no_conflict_until > best_assigned) {
-    copy_phases (phases.best);
+    if (opts.rephaserl && randflip == 'U') {
+      if (mab.last.phase == 'F') {
+        printf("Copying best F phase\n");
+        copy_phases_flipping (phases.best);
+      } else {
+        printf("Copying best # phase\n");
+        copy_phases_random (phases.best);
+      }
+    } else {
+      copy_phases (phases.best);
+    }
     best_assigned = no_conflict_until;
     LOG ("new best trail level %zu", best_assigned);
   }

@@ -11,6 +11,11 @@ struct Phases {
   vector<signed char> prev;   // Previous during local search.
   vector<signed char> saved;  // The actual saved phase.
   vector<signed char> target; // The current target phase.
+
+  vector<signed char> random;
+  vector<signed char> flipping;
+  vector<signed char> original;
+  vector<signed char> inverted;
 };
 
 } // namespace CaDiCaL
