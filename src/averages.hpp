@@ -25,6 +25,8 @@ struct Averages {
     EMA jump;  // average (potential non-chronological) back-jump level
     EMA level; // average back track level after conflict
 
+    EMA llr; // average phase window learning rate
+
   } current, saved;
 
   Averages () : swapped (0) {}

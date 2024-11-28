@@ -10,6 +10,8 @@ void Internal::init_averages () {
   INIT_EMA (averages.current.level, opts.emalevel);
   INIT_EMA (averages.current.size, opts.emasize);
 
+  INIT_EMA (averages.current.llr, opts.emaphase);
+
   INIT_EMA (averages.current.glue.fast, opts.emagluefast);
   INIT_EMA (averages.current.glue.slow, opts.emaglueslow);
 
