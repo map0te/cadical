@@ -59,8 +59,13 @@ int Internal::decide_phase (int idx, bool target) {
         phase = phases.flipping[idx];
       else
         phase = phases.random[idx];
+    } else if (opts.rephaserl && originv == 'S') {
+      if (mab.last.phase == 'O')
+        phase = phases.original[idx];
+      else
+        phase = phases.inverted[idx];
     } else {
-    phase = phases.saved[idx];
+      phase = phases.saved[idx];
     }
   }
   if (!phase)
@@ -75,8 +80,13 @@ int Internal::decide_phase (int idx, bool target) {
         phase = phases.flipping[idx];
       else
         phase = phases.random[idx];
+    } else if (opts.rephaserl && originv == 'S') {
+      if (mab.last.phase == 'O')
+        phase = phases.original[idx];
+      else
+        phase = phases.inverted[idx];  
     } else {
-    phase = phases.saved[idx];
+      phase = phases.saved[idx];
     }
   }
 

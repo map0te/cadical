@@ -177,7 +177,8 @@ struct Internal {
   bool forced_backt_allowed;  // external propagator can force backtracking
   bool private_steps;         // no notification of ext. prop during these steps
   char rephased;              // last type of resetting phases
-  char randflip;              // if in randflip mode
+  char randflip;              // if in randflip rephase mode
+  char originv;               // if in originv rephase mode
   Reluctant reluctant;        // restart counter in stable mode
   size_t vsize;               // actually allocated variable data size
   int max_var;                // internal maximum variable index
@@ -713,6 +714,8 @@ struct Internal {
 
   void copy_phases_flipping (vector<signed char> &dst);
   void copy_phases_random (vector<signed char> &dst);
+  void copy_phases_original (vector<signed char> &dst);
+  void copy_phases_inverted (vector<signed char> &dst);
 
   // Resetting the saved phased in 'rephase.cpp'.
   //
@@ -723,6 +726,7 @@ struct Internal {
   char rephase_original ();
   char rephase_random ();
   char rephase_randflip ();
+  char rephase_originv ();
   char rephase_walk ();
   void shuffle_scores ();
   void shuffle_queue ();

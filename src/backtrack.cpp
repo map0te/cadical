@@ -69,10 +69,8 @@ void Internal::update_target_and_best () {
   if (no_conflict_until > best_assigned) {
     if (opts.rephaserl && randflip == 'U') {
       if (mab.last.phase == 'F') {
-        printf("Copying best F phase\n");
         copy_phases_flipping (phases.best);
       } else {
-        printf("Copying best # phase\n");
         copy_phases_random (phases.best);
       }
     } else {

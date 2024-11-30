@@ -75,20 +75,6 @@ char Internal::rephase_random () {
   return '#';
 }
 
-// Generate both random and flipped phase for RL switching
-
-char Internal::rephase_randflip () {
-  stats.rephased.random++;
-  PHASE ("rephase", stats.rephased.total, "switch between flipped and random");
-  Random random (opts.seed);
-  random += stats.rephased.random;
-  for (auto idx : vars)
-    phases.random[idx] = random.generate_bool () ? -1 : 1;
-  for (auto idx : vars)
-    phases.flipping[idx] *= -1;
-  return 'U';
-}
-
 // Best phases are those saved at the largest trail height without conflict.
 // See code and comments in 'update_target_and_best' in 'backtrack.cpp'
 
@@ -111,6 +97,34 @@ char Internal::rephase_walk () {
          "starting local search to improve current phase");
   walk ();
   return 'W';
+}
+
+// Generate both random and flipped phase for RL switching
+
+char Internal::rephase_randflip () {
+  stats.rephased.random++;
+  PHASE ("rephase", stats.rephased.total, "switch between flipped and random");
+  Random random (opts.seed);
+  random += stats.rephased.random;
+  for (auto idx : vars)
+    phases.random[idx] = random.generate_bool () ? -1 : 1;
+  for (auto idx : vars)
+    phases.flipping[idx] *= -1;
+  return 'U';
+}
+
+// Generate both original and inverted phase for RL switching
+
+char Internal::rephase_originv () {
+  stats.rephased.original++;
+  signed char orig = opts.phase ? 1 : -1;
+  signed char inv = opts.phase ? -1 : 1;
+  PHASE ("rephase", stats.rephased.total, "switch between original and inverted");
+  for (auto idx : vars)
+    phases.original[idx] = orig;
+  for (auto idx : vars)
+    phases.inverted[idx] = inv;
+  return 'S';
 }
 
 /*------------------------------------------------------------------------*/
@@ -142,23 +156,48 @@ void Internal::rephase () {
     single = !opts.stabilize;
 
   if (opts.rephaserl && !stable && opts.walk) {
+    originv = 0;
     randflip = 0;
     switch(count % 3) {
-    case 1:
-      type = 'B';
-      rephase_best();
-      break;
-    case 2:
-      type = 'W';
-      rephase_walk();
-      break;
     case 0:
       type = 'U';
       randflip = 'U';
-      printf("F: %lf %lf, #: %lf %lf\n", mab.F.alpha, mab.F.beta, mab.R.alpha, mab.R.beta);
       mab.reset();
-      rephase_randflip();
+      rephase_randflip ();
       break;
+    case 1:
+      type = 'B';
+      rephase_best ();
+      break;
+    case 2:
+      type = 'W';
+      rephase_walk ();
+      break;
+    }
+  } else if (opts.rephaserl && stable && opts.walk) {
+    originv = 0;
+    randflip = 0;
+    if (!count)
+      type = rephase_original ();
+    else if (count == 1)
+      type = rephase_inverted ();
+    else {
+      switch ((count - 2) % 3) {
+      case 0:
+        type = 'B';
+        rephase_best ();
+        break;
+      case 1:
+        type = 'W';
+        rephase_walk ();
+        break;
+      case 2:
+        type = 'S';
+        originv = 'S';
+        mab.reset ();
+        rephase_originv ();
+        break;
+      }
     }
   } else if (single && !opts.walk) {
     // (inverted,best,flipping,best,random,best,original,best)^\omega

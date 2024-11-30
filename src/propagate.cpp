@@ -154,6 +154,11 @@ inline void Internal::search_assign (int lit, Clause *reason) {
         phases.flipping[idx] = tmp;
       else
         phases.random[idx] = tmp;
+    } else if (opts.rephaserl && originv == 'S') {
+      if (mab.last.phase == 'O')
+        phases.original[idx] = tmp;
+      else 
+        phases.inverted[idx] = tmp;
     } else {
     phases.saved[idx] = tmp; // phase saving during search
     }

@@ -121,11 +121,9 @@ int Internal::reuse_trail () {
 }
 
 void Internal::restart () {
-  
-  bool reuse = true;
-
-  // if rephaserl and in randflip phase, choose which phase the next
+  // if rephaserl, choose which phase the next
   // restart window will work on based on MAB
+  bool reuse = true; // if mab chooses a different phase, cannot reusetrail
   if (opts.rephaserl && stats.restarts % 30) {
     if (randflip == 'U') {
       // update llr EMA 
@@ -141,7 +139,21 @@ void Internal::restart () {
       // decide on next flip/rand phase
       char last_phase = mab.last.phase;
       mab.unstable_decide(random.generate_int());
-      //printf("Rephased to %c, llr=%lf, emallr=%lf\n", mab.last.phase, llr, averages.current.llr.value);
+      reuse = (last_phase == mab.last.phase);
+    } else if (originv == 'S') {
+      // update llr EMA
+      double llr = (stats.conflicts-mab.last.conflicts)
+        / (double) (stats.decisions-mab.last.decisions);
+      UPDATE_AVERAGE(averages.current.llr, llr);
+      // update MAB
+      mab.last.conflicts = stats.conflicts;
+      mab.last.decisions = stats.decisions;
+      Random random (opts.seed);
+      random += stats.restarts;
+      mab.stable_update(llr, averages.current.llr.value);
+      // decide on next orig/inv phase
+      char last_phase = mab.last.phase;
+      mab.stable_decide(random.generate_int());
       reuse = (last_phase == mab.last.phase);
     }
   }

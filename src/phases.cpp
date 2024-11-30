@@ -23,6 +23,20 @@ void Internal::copy_phases_random (vector<signed char> &dst) {
   STOP (copy);
 }
 
+void Internal::copy_phases_original (vector<signed char> &dst) {
+  START (copy);
+  for (auto i : vars)
+    dst[i] = phases.original[i];
+  STOP (copy);
+}
+
+void Internal::copy_phases_inverted (vector<signed char> &dst) {
+  START (copy);
+  for (auto i : vars)
+    dst[i] = phases.inverted[i];
+  STOP (copy);
+}
+
 void Internal::clear_phases (vector<signed char> &dst) {
   START (copy);
   for (auto i : vars)
