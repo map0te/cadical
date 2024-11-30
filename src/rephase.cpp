@@ -159,22 +159,20 @@ void Internal::rephase () {
     originv = 0;
     randflip = 0;
     if (!count)
-      type = rephase_random ();
-    else if (count == 1)
       type = rephase_flipping ();
     else {
-      switch((count-2) % 3) {
-      case 2:
+      switch((count-1) % 3) {
+      case 0:
         type = 'U';
         randflip = 'U';
         mab.reset();
         rephase_randflip ();
         break;
-      case 0:
+      case 1:
         type = 'B';
         rephase_best ();
         break;
-      case 1:
+      case 2:
         type = 'W';
         rephase_walk ();
         break;
