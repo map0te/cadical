@@ -63,10 +63,10 @@ struct MAB {
     void stable_update(double llr, double ema_llr) {
         switch (last.phase) {
         case 'O':
-            O.update(llr < ema_llr);
+            O.update(llr > ema_llr);
             break;
         case 'I':
-            I.update(llr < ema_llr);
+            I.update(llr > ema_llr);
             break;
         }
     }

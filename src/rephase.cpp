@@ -158,21 +158,27 @@ void Internal::rephase () {
   if (opts.rephaserl && !stable && opts.walk) {
     originv = 0;
     randflip = 0;
-    switch(count % 3) {
-    case 0:
-      type = 'U';
-      randflip = 'U';
-      mab.reset();
-      rephase_randflip ();
-      break;
-    case 1:
-      type = 'B';
-      rephase_best ();
-      break;
-    case 2:
-      type = 'W';
-      rephase_walk ();
-      break;
+    if (!count)
+      type = rephase_random ();
+    else if (count == 1)
+      type = rephase_flipping ();
+    else {
+      switch((count-2) % 3) {
+      case 2:
+        type = 'U';
+        randflip = 'U';
+        mab.reset();
+        rephase_randflip ();
+        break;
+      case 0:
+        type = 'B';
+        rephase_best ();
+        break;
+      case 1:
+        type = 'W';
+        rephase_walk ();
+        break;
+      }
     }
   } else if (opts.rephaserl && stable && opts.walk) {
     originv = 0;
