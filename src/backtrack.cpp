@@ -59,6 +59,11 @@ void Internal::update_target_and_best () {
         copy_phases_flipping (phases.target);
       else
         copy_phases_random (phases.target);
+    } else if (opts.rephaserl && originv == 'S') {
+      if (mab.last.phase == 'O')
+        copy_phases_original (phases.target);
+      else
+        copy_phases_inverted (phases.target);
     } else {
       copy_phases (phases.target);
     }
@@ -68,13 +73,17 @@ void Internal::update_target_and_best () {
 
   if (no_conflict_until > best_assigned) {
     if (opts.rephaserl && randflip == 'U') {
-      if (mab.last.phase == 'F') {
-        copy_phases_flipping (phases.best);
-      } else {
-        copy_phases_random (phases.best);
-      }
+      if (mab.last.phase == 'F')
+        copy_phases_flipping (phases.target);
+      else
+        copy_phases_random (phases.target);
+    } else if (opts.rephaserl && originv == 'S') {
+      if (mab.last.phase == 'O')
+        copy_phases_original (phases.target);
+      else
+        copy_phases_inverted (phases.target);
     } else {
-      copy_phases (phases.best);
+      copy_phases (phases.target);
     }
     best_assigned = no_conflict_until;
     LOG ("new best trail level %zu", best_assigned);
