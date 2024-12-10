@@ -19,6 +19,7 @@ struct Averages {
     struct {
       EMA fast; // average fast (small window) moving trail level
       EMA slow; // average slow (large window) moving trail level
+      EMA rephase;
     } trail;
 
     EMA size;  // average learned clause size

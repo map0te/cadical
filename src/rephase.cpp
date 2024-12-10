@@ -198,7 +198,8 @@ void Internal::rephase () {
       case 2:
         type = 'S';
         originv = 'S';
-        mab.reset ();
+        printf("O: %lf %lf, I: %lf %lf\n", mab.O.alpha, mab.O.beta, mab.I.alpha, mab.I.beta);
+        //mab.reset ();
         rephase_originv ();
         break;
       }

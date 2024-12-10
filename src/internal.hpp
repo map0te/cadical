@@ -179,6 +179,9 @@ struct Internal {
   char rephased;              // last type of resetting phases
   char randflip;              // if in randflip rephase mode
   char originv;               // if in originv rephase mode
+  bool justrestarted;         // just restarted to reset rephase average
+  uint64_t numconflicts;           // num conflicts for average computing
+  uint64_t sumtrail;
   Reluctant reluctant;        // restart counter in stable mode
   size_t vsize;               // actually allocated variable data size
   int max_var;                // internal maximum variable index

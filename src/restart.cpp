@@ -46,7 +46,6 @@ bool Internal::stabilizing () {
            lim.stabilize, inc.stabilize);
     report (stable ? '[' : '{');
     if (stable) {
-      randflip = 0;
       START (stable);
     }
     else
@@ -124,8 +123,8 @@ void Internal::restart () {
   // if rephaserl, choose which phase the next
   // restart window will work on based on MAB
   bool reuse = true; // if mab chooses a different phase, cannot reusetrail
-  if (opts.rephaserl && stats.restarts % 30) {
-    if (randflip == 'U') {
+  if (opts.rephaserl) {
+    if (randflip == 'U' && stats.restarts % 30) {
       // update llr EMA 
       double llr = (stats.conflicts-mab.last.conflicts)
        / (double) (stats.decisions-mab.last.decisions);
@@ -135,12 +134,12 @@ void Internal::restart () {
       mab.last.decisions = stats.decisions;
       Random random (opts.seed);
       random += stats.restarts;
-      mab.unstable_update(llr, averages.current.llr.value);
+      mab.unstable_update(llr > averages.current.llr.value);
       // decide on next flip/rand phase
       char last_phase = mab.last.phase;
       mab.unstable_decide(random.generate_int());
       reuse = (last_phase == mab.last.phase);
-    } else if (originv == 'S') {
+    } else if (originv == 'S' && stable) {
       // update llr EMA
       double llr = (stats.conflicts-mab.last.conflicts)
         / (double) (stats.decisions-mab.last.decisions);
@@ -150,7 +149,9 @@ void Internal::restart () {
       mab.last.decisions = stats.decisions;
       Random random (opts.seed);
       random += stats.restarts;
-      mab.stable_update(llr, averages.current.llr.value);
+      bool suc_trail = (sumtrail / (double) numconflicts) > averages.current.trail.rephase.value;
+      bool suc_llr = llr > 1.2*averages.current.llr.value;
+      mab.stable_update(suc_llr || suc_trail );
       // decide on next orig/inv phase
       char last_phase = mab.last.phase;
       mab.stable_decide(random.generate_int());

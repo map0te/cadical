@@ -43,13 +43,13 @@ struct MAB {
             last.phase = '#';
         }
     }
-    void unstable_update(double llr, double ema_llr) {
+    void unstable_update(bool success) {
         switch (last.phase) {
         case 'F':
-            F.update(llr > ema_llr);
+            F.update(success);
             break;
         case '#':
-            R.update(llr > ema_llr);
+            R.update(success);
             break;
         }
     }
@@ -60,13 +60,13 @@ struct MAB {
             last.phase = 'I';
         }
     }
-    void stable_update(double llr, double ema_llr) {
+    void stable_update(bool success) {
         switch (last.phase) {
         case 'O':
-            O.update(llr > ema_llr);
+            O.update(success);
             break;
         case 'I':
-            I.update(llr > ema_llr);
+            I.update(success);
             break;
         }
     }
@@ -75,18 +75,18 @@ struct MAB {
         F.beta = 1.0;
         R.alpha = 1.0;
         R.beta = 1.0;
-        O.alpha = 1.0;
-        O.beta = 1.0;
-        I.alpha = 1.0;
-        I.beta = 1.0;
+        //O.alpha = 1.0;
+        //O.beta = 1.0;
+        //I.alpha = 1.0;
+        //I.beta = 1.0;
         F.a = std::gamma_distribution<> (1.0);
         F.b = std::gamma_distribution<> (1.0);
         R.a = std::gamma_distribution<> (1.0);
         R.b = std::gamma_distribution<> (1.0);
-        O.a = std::gamma_distribution<> (1.0);
-        O.b = std::gamma_distribution<> (1.0);
-        I.a = std::gamma_distribution<> (1.0);
-        I.b = std::gamma_distribution<> (1.0);
+        //O.a = std::gamma_distribution<> (1.0);
+        //O.b = std::gamma_distribution<> (1.0);
+        //I.a = std::gamma_distribution<> (1.0);
+        //I.b = std::gamma_distribution<> (1.0);
         last.decisions = 1;
         last.conflicts = 0;
     }

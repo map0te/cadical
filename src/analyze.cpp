@@ -872,6 +872,19 @@ void Internal::analyze () {
   UPDATE_AVERAGE (averages.current.trail.fast, num_assigned);
   UPDATE_AVERAGE (averages.current.trail.slow, num_assigned);
 
+  // Update local rephase average
+  if (opts.rephaserl && stable && originv == 'S') {
+    UPDATE_AVERAGE (averages.current.trail.rephase, num_assigned);
+    if (justrestarted) {
+      justrestarted = false;
+      sumtrail = num_assigned;
+      numconflicts = 1;
+    } else {
+      sumtrail += num_assigned;
+      numconflicts++;
+    }
+  }
+
   /*----------------------------------------------------------------------*/
 
   if (external_prop && !external_prop_is_lazy) {
