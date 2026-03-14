@@ -950,7 +950,7 @@ void Solver::reset_observed_vars () {
 
 int Solver::active () const {
   TRACE ("active");
-  REQUIRE_VALID_STATE ();
+  REQUIRE_VALID_OR_SOLVING_STATE ();
   int res = internal->active ();
   LOG_API_CALL_RETURNS ("active", res);
   return res;
