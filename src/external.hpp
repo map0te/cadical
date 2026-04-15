@@ -92,6 +92,10 @@ struct External {
 
   Learner *learner;
 
+  // If there is a importer, import redundant clauses.
+
+  ClauseImporter *importer;
+
   void export_learned_empty_clause ();
   void export_learned_unit_clause (int ilit);
   void export_learned_large_clause (const vector<int> &);

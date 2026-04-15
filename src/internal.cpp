@@ -251,6 +251,8 @@ int Internal::cdcl_loop_with_inprocessing () {
       break;                               // decision or conflict limit
     else if (terminated_asynchronously ()) // externally terminated
       break;
+    else if (importing ())
+      import_redundant_clauses(res); //import redundant clauses
     else if (restarting ())
       restart (); // restart by backtracking
     else if (rephasing ())
@@ -282,6 +284,86 @@ int Internal::cdcl_loop_with_inprocessing () {
   STOP (search);
 
   return res;
+}
+
+bool Internal::importing () {
+  return level == 0 && external->importer != 0
+    && watching() && external->importer->has_clause ();
+}
+
+void Internal::import_redundant_clauses (int& res) {
+  if (external->importer == 0) return;
+  if (res != 0) return;
+
+  while (external->importer->has_clause ()) {
+    auto cls = external->importer->get_clause ();
+    size_t size = cls.size();
+    int unitLit = size == 1 ? cls[0] : 0;
+    assert (clause.empty ());
+
+    if (unitLit == 0) {
+      bool addClause = true;
+      bool hasFixedLits = false;
+      for (size_t i = 0; i < size; i++) {
+        int elit = cls[i];
+        if (external->marked (external->witness, elit)) {
+          addClause = false; break;
+        }
+        int ilit = external->internalize (elit);
+        auto& f = flags (ilit);
+        if (f.eliminated () || f.substituted ()) {
+          addClause = false; break;
+        } else if (f.fixed ()) {
+          if (val (ilit) == 1) {
+            addClause = false; break;
+          }
+          hasFixedLits = true;
+        } else {
+          clause.push_back (ilit);
+          unitLit = elit;
+        }
+      }
+      if (!addClause) {
+        clause.clear();
+        continue;
+      }
+      if (clause.size() >= 2) {
+        external->check_learned_clause ();
+        Clause * res = new_clause (false, clause.size());
+        //if (proof) proof->add_derived_clause (res);
+        watch_clause (res);
+        unitLit = 0;
+      } else if (clause.size() == 1) {
+        unitLit = internal->externalize (clause[0]);
+      } 
+    }
+
+    clause.clear ();
+
+    if (unitLit != 0) {
+      if (external->marked (external->witness, unitLit)) {
+        continue;
+      }
+      int ilit = external->internalize (unitLit);
+      auto& f = flags (ilit);
+      if (f.eliminated () || f.substituted ()) {
+        continue;
+      }
+      if (f.status == Flags::FIXED) {
+        continue;
+      }
+      assign_original_unit (ilit, ilit);
+    }
+    
+    if (unsat) {
+      res = 20;
+      return;
+    }
+    if (satisfied ()) {
+      res = 10;
+      return;
+    }
+  }
 }
 
 /*------------------------------------------------------------------------*/

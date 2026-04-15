@@ -878,6 +878,16 @@ void Solver::disconnect_learner () {
   LOG_API_CALL_END ("disconnect_learner");
 }
 
+
+void Solver::connect_importer (ClauseImporter * importer) {
+  REQUIRE_VALID_STATE ();
+  external->importer = importer;
+}
+void Solver::disconnect_importer () {
+  REQUIRE_VALID_STATE ();
+  external->importer = 0;
+}
+
 /*===== IPASIR END =======================================================*/
 
 /*===== IPASIR-UP BEGIN ==================================================*/

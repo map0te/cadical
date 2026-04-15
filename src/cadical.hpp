@@ -214,6 +214,9 @@ class InternalTracer;
 class FileTracer;
 class StatTracer;
 
+// For clause-sharing
+class ClauseImporter;
+
 /*------------------------------------------------------------------------*/
 
 class Solver {
@@ -357,6 +360,14 @@ public:
   //
   void connect_learner (Learner *learner);
   void disconnect_learner ();
+
+  // Add call-back which allows to import redundant clauses.
+  //
+  // require (VALID)
+  // ensure (VALID)
+  //
+  void connect_importer (ClauseImporter *importer);
+  void disconnect_importer ();
 
   // ====== END IPASIR =====================================================
 
@@ -1097,6 +1108,15 @@ public:
   virtual ~Learner () {}
   virtual bool learning (int size) = 0;
   virtual void learn (int lit) = 0;
+};
+
+// Connected clause importer which can be used to import redundant clauses.
+
+class ClauseImporter {
+public:
+  virtual ~ClauseImporter () {}
+  virtual bool has_clause () = 0;
+  virtual const std::vector<int>& get_clause () = 0;
 };
 
 /*------------------------------------------------------------------------*/

@@ -1205,6 +1205,10 @@ struct Internal {
   int solve (bool preprocess_only = false);
   void finalize (int);
 
+  // Import learnt clauses from an external source.
+  bool importing ();
+  void import_redundant_clauses (int& res);
+
   //
   int lookahead ();
   CubesWithStatus generate_cubes (int, int);
