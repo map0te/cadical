@@ -976,7 +976,7 @@ int64_t Solver::redundant () const {
 
 int64_t Solver::irredundant () const {
   TRACE ("irredundant");
-  REQUIRE_VALID_STATE ();
+  REQUIRE_VALID_OR_SOLVING_STATE ();
   int64_t res = internal->irredundant ();
   LOG_API_CALL_RETURNS ("irredundant", res);
   return res;
